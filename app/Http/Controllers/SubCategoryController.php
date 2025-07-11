@@ -22,13 +22,15 @@ class SubCategoryController extends Controller
 
             foreach ($subCategories as $subCategory) {
                 // Find the category for this subcategory
-                $category = Category::find($subCategory->id_category);
+                $category = Category::find($subCategory->category_id);
 
                 $data[] = [
                     'id' => $subCategory->id,
-                    'id_category' => $subCategory->id_category,
-                    'category' => $category ? $category->category : null,
-                    'sub_category' => $subCategory->sub_category,
+                    'category_id' => $subCategory->category_id,
+                    'category_kh' => $category ? $category->category_kh : null,
+                    'category_en' => $category ? $category->category_en : null,
+                    'sub_category_kh' => $subCategory->sub_category_kh,
+                    'sub_category_en' => $subCategory->sub_category_en,
                     'created_at' => $subCategory->created_at,
                     'updated_at' => $subCategory->updated_at,
                 ];
@@ -54,16 +56,23 @@ class SubCategoryController extends Controller
     {
         try {
             $validate = Validator::make($request->all(), [
-                'id_category' => [
+                'category_id' => [
                     'required',
                     'exists:tbl_category,id',
                 ],
-                'sub_category' => [
+                'sub_category_kh' => [
                     'required',
                     'string',
                     'max:255',
                     'regex:/^[\x{1780}-\x{17FF}\s]*$/u',
-                    'unique:tbl_sub_category,sub_category',
+                    'unique:tbl_sub_category,sub_category_kh',
+                ],
+                'sub_category_en' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    'regex:/^[A-Za-z\s]+$/',
+                    'unique:tbl_sub_category,sub_category_en',
                 ],
             ]);
 
@@ -74,22 +83,23 @@ class SubCategoryController extends Controller
                 ], 422);
             }
 
-            $id_category = $validate->validated()['id_category'];
-
-            $category = Category::find($id_category);
+            $category = Category::find($validate->validated()['category_id']);
 
             $data = SubCategory::create([
-                'id_category' => $validate->validated()['id_category'],
-                'sub_category' => $validate->validated()['sub_category'],
+                'category_id' => $validate->validated()['category_id'],
+                'sub_category_kh' => $validate->validated()['sub_category_kh'],
+                'sub_category_en' => $validate->validated()['sub_category_en'],
             ]);
 
             return response()->json([
                 'message' => 'SubCategory created successfully',
                 'data' => [
                     'id' => $data->id,
-                    'id_category' => $data->id_category,
-                    'category' => $category->category,
-                    'sub_category' => $data->sub_category,
+                    'category_id' => $data->category_id,
+                    'category_kh' => $category->category_kh,
+                    'category_en' => $category->category_en,
+                    'sub_category_kh' => $data->sub_category_kh,
+                    'sub_category_en' => $data->sub_category_en,
                     'crated_at' => $data->created_at,
                     'updated_at' => $data->updated_at,
                 ]
@@ -116,13 +126,15 @@ class SubCategoryController extends Controller
                 ], 404);
             }
 
-            $category = Category::find($sub->id_category);
+            $category = Category::find($sub->category_id);
 
             $data = [
                 'id' => $sub->id,
-                'id_category' => $sub->id_category,
-                'category' => $category ? $category->category : null,
-                'sub_category' => $sub->sub_category,
+                'category_id' => $sub->category_id,
+                'category_kh' => $category ? $category->category_kh : null,
+                'category_en' => $category ? $category->category_en : null,
+                'sub_category_kh' => $sub->sub_category_kh,
+                'sub_category_en' => $sub->sub_category_en,
                 'created_at' => $sub->created_at,
                 'updated_at' => $sub->updated_at,
             ];
@@ -154,16 +166,23 @@ class SubCategoryController extends Controller
             }
 
             $validate = Validator::make($request->all(), [
-                'id_category' => [
+                'category_id' => [
                     'sometimes',
                     'exists:tbl_category,id',
                 ],
-                'sub_category' => [
+                'sub_category_kh' => [
                     'sometimes',
                     'string',
                     'max:255',
                     'regex:/^[\x{1780}-\x{17FF}\s]*$/u',
-                    'unique:tbl_sub_category,sub_category',
+                    'unique:tbl_sub_category,sub_category_kh',
+                ],
+                'sub_category_en' => [
+                    'sometimes',
+                    'string',
+                    'max:255',
+                    'regex:/^[A-Za-z\s]+$/',
+                    'unique:tbl_sub_category,sub_category_en',
                 ],
             ]);
 
@@ -177,12 +196,14 @@ class SubCategoryController extends Controller
             $sub->update($validate->validated());
 
             // find category
-            $category = Category::find($sub->id_category);
+            $category = Category::find($sub->category_id);
             $db = [
                 'id' => $sub->id,
-                'id_category' => $sub->id_category,
-                'category' => $category ? $category->category : null,
-                'sub_category' => $sub->sub_category,
+                'category_id' => $sub->category_id,
+                'category_kh' => $category ? $category->category_kh : null,
+                'category_en' => $category ? $category->category_en : null,
+                'sub_category_kh' => $sub->sub_category_kh,
+                'sub_category_en' => $sub->sub_category_en,
                 'created_at' => $sub->created_at,
                 'updated_at' => $sub->updated_at,
             ];

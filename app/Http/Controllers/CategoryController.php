@@ -28,12 +28,18 @@ class CategoryController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'category' => [
+                'category_kh' => [
                     'required',
                     'string',
                     'max:255',
                     'regex:/^[\x{1780}-\x{17FF}\s]*$/u',
-                    'unique:tbl_category,category',
+                    'unique:tbl_category,category_kh',
+                ],
+                'category_en' => [
+                    'required',
+                    'string',
+                    'max:255','regex:/^[A-Za-z\s]+$/',
+                    'unique:tbl_category,category_en',
                 ],
             ]);
 
@@ -45,14 +51,16 @@ class CategoryController extends Controller
             }
 
             $data = Category::create([
-                'category' => $validator->validated()['category'],
+                'category_kh' => $validator->validated()['category_kh'],
+                'category_en' => $validator->validated()['category_en'],
             ]);
 
             return response()->json([
                 'message' => 'Category created successfully',
                 'data' => [
                     'id' => $data->id,
-                    'category' => $data->category,
+                    'category_kh' => $data->category_kh,
+                    'category_en' => $data->category_en,
                 ]
             ], 201);
         } catch (\Exception $e) {
@@ -97,12 +105,19 @@ class CategoryController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'category' => [
-                'required',
+            'category_kh' => [
+                'sometimes',
                 'string',
                 'max:50',
                 'regex:/^[\x{1780}-\x{17FF}\s]*$/u',
-                'unique:tbl_category,category,' . $id,
+                'unique:tbl_category,category_kh,' . $id,
+            ],
+            'category_en' => [
+                'sometimes',
+                'string',
+                'max:50',
+                'regex:/^[A-Za-z\s]+$/',
+                'unique:tbl_category,category_en,' . $id,
             ],
         ]);
 

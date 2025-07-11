@@ -12,6 +12,7 @@ class Category extends Model
     public $table = 'tbl_category';
 
     protected $fillable = [
-        'category',
+        'category_kh',
+        'category_en',
     ];
 }
