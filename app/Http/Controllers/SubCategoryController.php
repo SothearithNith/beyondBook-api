@@ -18,8 +18,6 @@ class SubCategoryController extends Controller
             // Get all SubCategories
             $subCategories = SubCategory::all();
 
-            $data = [];
-
             foreach ($subCategories as $subCategory) {
                 // Find the category for this subcategory
                 $category = Category::find($subCategory->category_id);
